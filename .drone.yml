@@ -1,34 +1,5 @@
 ---
 kind: pipeline
-name: testing
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: vet
-  pull: always
-  image: golang:1.11
-  commands:
-  - go vet ./...
-  environment:
-    GO111MODULE: on
-
-- name: test
-  pull: always
-  image: golang:1.11
-  commands:
-  - go test -cover ./...
-  environment:
-    GO111MODULE: on
-
-trigger:
-  branch:
-  - master
-
----
-kind: pipeline
 name: linux-amd64
 
 platform:
@@ -103,9 +74,6 @@ steps:
 trigger:
   branch:
   - master
-
-depends_on:
-- testing
 
 ---
 kind: pipeline
@@ -184,9 +152,6 @@ trigger:
   branch:
   - master
 
-depends_on:
-- testing
-
 ---
 kind: pipeline
 name: linux-arm
@@ -263,9 +228,6 @@ steps:
 trigger:
   branch:
   - master
-
-depends_on:
-- testing
 
 ---
 kind: pipeline
