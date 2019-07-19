@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"encoding/base64"
 
 	"github.com/urfave/cli"
+	"./lib/teams"
 )
 
 var (
@@ -13,7 +15,24 @@ var (
 	build   = "0"
 )
 
+type Icons struct {
+	OK string
+	Error string
+}
+
+func icon(iconPath string) string {
+	icon, _ := Asset(iconPath)
+	return "data:image/png;base64," + base64.StdEncoding.EncodeToString(icon);
+}
+
+var icons = Icons{
+	OK: icon("assets/icon-ok.png"),
+	Error: icon("assets/icon-error.png"),
+}
+
+
 func main() {
+
 	app := cli.NewApp()
 	app.Name = "teams plugin"
 	app.Usage = "teams plugin"
@@ -22,48 +41,9 @@ func main() {
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:   "webhook",
-			Usage:  "slack webhook url",
-			EnvVar: "SLACK_WEBHOOK,PLUGIN_WEBHOOK",
-		},
-		cli.StringFlag{
-			Name:   "channel",
-			Usage:  "slack channel",
-			EnvVar: "PLUGIN_CHANNEL",
-		},
-		cli.StringFlag{
-			Name:   "recipient",
-			Usage:  "slack recipient",
-			EnvVar: "PLUGIN_RECIPIENT",
-		},
-		cli.StringFlag{
-			Name:   "username",
-			Usage:  "slack username",
-			EnvVar: "PLUGIN_USERNAME",
-		},
-		cli.StringFlag{
-			Name:   "template",
-			Usage:  "slack template",
-			EnvVar: "PLUGIN_TEMPLATE",
-		},
-		cli.BoolFlag{
-			Name:   "link-names",
-			Usage:  "slack link names",
-			EnvVar: "PLUGIN_LINK_NAMES",
-		},
-		cli.StringFlag{
-			Name:   "image",
-			Usage:  "slack image url",
-			EnvVar: "PLUGIN_IMAGE_URL",
-		},
-		cli.StringFlag{
-			Name:   "icon.url",
-			Usage:  "slack icon url",
-			EnvVar: "PLUGIN_ICON_URL",
-		},
-		cli.StringFlag{
-			Name:   "icon.emoji",
-			Usage:  "slack emoji url",
-			EnvVar: "PLUGIN_ICON_EMOJI",
+			Usage:  "teams webhook url",
+			EnvVar: "TEAMS_WEBHOOK,PLUGIN_WEBHOOK",
+	
 		},
 		cli.StringFlag{
 			Name:   "repo.owner",
@@ -117,6 +97,7 @@ func main() {
 		cli.IntFlag{
 			Name:   "build.number",
 			Usage:  "build number",
+			Value:  0,
 			EnvVar: "DRONE_BUILD_NUMBER",
 		},
 		cli.StringFlag{
@@ -163,42 +144,64 @@ func main() {
 }
 
 func run(c *cli.Context) error {
-	plugin := Plugin{
-		Repo: Repo{
-			Owner: c.String("repo.owner"),
-			Name:  c.String("repo.name"),
-		},
-		Build: Build{
-			Tag:      c.String("build.tag"),
-			Number:   c.Int("build.number"),
-			Event:    c.String("build.event"),
-			Status:   c.String("build.status"),
-			Commit:   c.String("commit.sha"),
-			Ref:      c.String("commit.ref"),
-			Branch:   c.String("commit.branch"),
-			Author:   c.String("commit.author"),
-			Pull:     c.String("commit.pull"),
-			Message:  c.String("commit.message"),
-			DeployTo: c.String("build.deployTo"),
-			Link:     c.String("build.link"),
-			Started:  c.Int64("build.started"),
-			Created:  c.Int64("build.created"),
-		},
-		Job: Job{
-			Started: c.Int64("job.started"),
-		},
-		Config: Config{
-			Webhook:   c.String("webhook"),
-			Channel:   c.String("channel"),
-			Recipient: c.String("recipient"),
-			Username:  c.String("username"),
-			Template:  c.String("template"),
-			ImageURL:  c.String("image"),
-			IconURL:   c.String("icon.url"),
-			IconEmoji: c.String("icon.emoji"),
-			LinkNames: c.Bool("link-names"),
-		},
+
+	api, err := teams.New(c.String("webhook"))
+
+	var title = "Build " 
+	var icon string
+	
+	if c.String("build.status") == "success" {
+		title = title + "Completed"
+		icon = icons.OK
+	} else {
+		title = title + "Failed"
+		icon = icons.Error
 	}
 
-	return plugin.Exec()
+	resp, err := api.PerformAPIRequest(&teams.APIRequest{
+		Summary: title,
+		Sections: []teams.APISection{
+			{
+				Title: title,
+				SubTitle: string("\\#" + c.String("build.number") + " " + c.String("repo.name")),
+				Image: icon,
+				Facts: []teams.APIFact{
+					{
+						Name: "Branch",
+						Value: c.String("commit.branch"),
+					},
+					{
+						Name: "Author",
+						Value: c.String("commit.author"),
+					},
+					{
+						Name: "Message",
+						Value: c.String("commit.message"),
+					},
+					{
+						Name: "Started",
+						Value: c.String("build.started"),
+					},
+				},
+			},
+		},
+		PotentialActions: []teams.APIPotentialAction{
+			{
+				Type: "OpenUri",
+				Name: "View Result",
+				Targets: []teams.APIOpenUriTarget{
+					{
+						OS: "default",
+						URI:  c.String("build.link"),
+					},
+				},
+			},
+		},
+		
+	})
+
+	log.Println(resp);
+
+	return err
+
 }
