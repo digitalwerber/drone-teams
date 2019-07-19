@@ -11,6 +11,8 @@ steps:
   pull: always
   image: golang:1.11
   commands:
+  - go get github.com/urfave/cli
+  - go get github.com/pkg/errors
   - "go build -v -ldflags \"-X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/linux/amd64/drone-teams"
   environment:
     CGO_ENABLED: 0
@@ -24,6 +26,8 @@ steps:
   pull: always
   image: golang:1.11
   commands:
+  - go get github.com/urfave/cli
+  - go get github.com/pkg/errors
   - "go build -v -ldflags \"-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/linux/amd64/drone-teams"
   environment:
     CGO_ENABLED: 0
@@ -88,6 +92,8 @@ steps:
   pull: always
   image: golang:1.11
   commands:
+  - go get github.com/urfave/cli
+  - go get github.com/pkg/errors
   - "go build -v -ldflags \"-X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/linux/arm64/drone-teams"
   environment:
     CGO_ENABLED: 0
@@ -101,6 +107,8 @@ steps:
   pull: always
   image: golang:1.11
   commands:
+  - go get github.com/urfave/cli
+  - go get github.com/pkg/errors
   - "go build -v -ldflags \"-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/linux/arm64/drone-teams"
   environment:
     CGO_ENABLED: 0
@@ -165,6 +173,8 @@ steps:
   pull: always
   image: golang:1.11
   commands:
+  - go get github.com/urfave/cli
+  - go get github.com/pkg/errors
   - "go build -v -ldflags \"-X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/linux/arm/drone-teams"
   environment:
     CGO_ENABLED: 0
@@ -178,6 +188,8 @@ steps:
   pull: always
   image: golang:1.11
   commands:
+  - go get github.com/urfave/cli
+  - go get github.com/pkg/errors
   - "go build -v -ldflags \"-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/linux/arm/drone-teams"
   environment:
     CGO_ENABLED: 0
