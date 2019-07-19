@@ -1,7 +1,7 @@
 repository:
-  name: drone-slack
-  description: Drone plugin for sending Slack notifications
-  homepage: http://plugins.drone.io/drone-plugins/drone-slack
+  name: drone-teams
+  description: Drone plugin for sending Microsoft Teams notifications
+  homepage: https://github.com/digitalwerber/drone-teams
   topics: drone, drone-plugin
 
   private: false

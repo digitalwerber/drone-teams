@@ -11,7 +11,7 @@ steps:
   pull: always
   image: golang:1.11
   commands:
-  - "go build -v -ldflags \"-X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/windows/amd64/drone-slack"
+  - "go build -v -ldflags \"-X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/windows/amd64/drone-teams"
   environment:
     CGO_ENABLED: 0
     GO111MODULE: on
@@ -24,7 +24,7 @@ steps:
   pull: always
   image: golang:1.11
   commands:
-  - "go build -v -ldflags \"-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/windows/amd64/drone-slack"
+  - "go build -v -ldflags \"-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/windows/amd64/drone-teams"
   environment:
     CGO_ENABLED: 0
     GO111MODULE: on
@@ -36,7 +36,7 @@ steps:
   pull: always
   image: golang:1.11
   commands:
-  - ./release/windows/amd64/drone-slack --help
+  - ./release/windows/amd64/drone-teams --help
 
 - name: dryrun
   pull: always
@@ -46,7 +46,7 @@ steps:
     dry_run: true
     password:
       from_secret: docker_password
-    repo: plugins/slack
+    repo: digitalwerber/drone-teams
     tags: windows-amd64
     username:
       from_secret: docker_username
@@ -63,7 +63,7 @@ steps:
     dockerfile: docker/Dockerfile.windows.amd64
     password:
       from_secret: docker_password
-    repo: plugins/slack
+    repo: digitalwerber/drone-teams
     username:
       from_secret: docker_username
   when:

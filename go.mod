@@ -1,4 +1,4 @@
-module github.com/drone-plugins/drone-slack
+module github.com/drone-plugins/drone-teams
 
 require (
 	bou.ke/monkey v1.0.1 // indirect

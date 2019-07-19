@@ -51,7 +51,7 @@ local PipelineBuild(os="linux", arch="amd64") = {
         GO111MODULE: "on",
       },
       commands: [
-        "go build -v -ldflags \"-X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/" + os + "/" + arch + "/drone-slack",
+        "go build -v -ldflags \"-X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/" + os + "/" + arch + "/drone-teams",
       ],
       when: {
         event: [ "push", "pull_request" ],
@@ -66,7 +66,7 @@ local PipelineBuild(os="linux", arch="amd64") = {
         GO111MODULE: "on",
       },
       commands: [
-        "go build -v -ldflags \"-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/" + os + "/" + arch + "/drone-slack",
+        "go build -v -ldflags \"-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/" + os + "/" + arch + "/drone-teams",
       ],
       when: {
         event: [ "tag" ],
@@ -77,7 +77,7 @@ local PipelineBuild(os="linux", arch="amd64") = {
       image: "golang:1.11",
       pull: "always",
       commands: [
-        "./release/" + os + "/" + arch + "/drone-slack --help",
+        "./release/" + os + "/" + arch + "/drone-teams --help",
       ],
     },
     {
@@ -88,7 +88,7 @@ local PipelineBuild(os="linux", arch="amd64") = {
         dry_run: true,
         tags: os + "-" + arch,
         dockerfile: "docker/Dockerfile." + os + "." + arch,
-        repo: "plugins/slack",
+        repo: "plugins/teams",
         username: { "from_secret": "docker_username" },
         password: { "from_secret": "docker_password" },
       },
@@ -104,7 +104,7 @@ local PipelineBuild(os="linux", arch="amd64") = {
         auto_tag: true,
         auto_tag_suffix: os + "-" + arch,
         dockerfile: "docker/Dockerfile." + os + "." + arch,
-        repo: "plugins/slack",
+        repo: "plugins/teams",
         username: { "from_secret": "docker_username" },
         password: { "from_secret": "docker_password" },
       },

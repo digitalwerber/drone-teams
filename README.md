@@ -1,9 +1,6 @@
-# drone-slack
+# drone-teams
 
-[![Build Status](http://cloud.drone.io/api/badges/drone-plugins/drone-slack/status.svg)](http://cloud.drone.io/drone-plugins/drone-slack)
-[![Gitter chat](https://badges.gitter.im/drone/drone.png)](https://gitter.im/drone/drone)
-[![Join the discussion at https://discourse.drone.io](https://img.shields.io/badge/discourse-forum-orange.svg)](https://discourse.drone.io)
-[![Drone questions at https://stackoverflow.com](https://img.shields.io/badge/drone-stackoverflow-orange.svg)](https://stackoverflow.com/questions/tagged/drone.io)
+[![Build Status](http://drone.digitalwerber.com/api/badges/digitalwerber/drone-teams/status.svg)](http://drone.digitalwerber.com/digitalwerber/drone-teams)
 [![](https://images.microbadger.com/badges/image/plugins/slack.svg)](https://microbadger.com/images/plugins/slack "Get your own image badge on microbadger.com")
 [![Go Doc](https://godoc.org/github.com/drone-plugins/drone-slack?status.svg)](http://godoc.org/github.com/drone-plugins/drone-slack)
 [![Go Report](https://goreportcard.com/badge/github.com/drone-plugins/drone-slack)](https://goreportcard.com/report/github.com/drone-plugins/drone-slack)

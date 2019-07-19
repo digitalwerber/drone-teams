@@ -15,8 +15,8 @@ var (
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "slack plugin"
-	app.Usage = "slack plugin"
+	app.Name = "teams plugin"
+	app.Usage = "teams plugin"
 	app.Action = run
 	app.Version = fmt.Sprintf("%s+%s", version, build)
 	app.Flags = []cli.Flag{
