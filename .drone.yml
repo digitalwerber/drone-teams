@@ -226,45 +226,7 @@ trigger:
   - master
 
 ---
-kind: pipeline
-name: notifications
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: manifest
-  pull: always
-  image: plugins/manifest:1
-  settings:
-    ignore_missing: true
-    password:
-      from_secret: docker_password
-    spec: docker/manifest.tmpl
-    username:
-      from_secret: docker_username
-
-- name: microbadger
-  pull: always
-  image: plugins/webhook:1
-  settings:
-    url:
-      from_secret: microbadger_url
-
-trigger:
-  branch:
-  - master
-  event:
-  - push
-  - tag
-
-depends_on:
-- linux-amd64
-- linux-arm64
-- linux-arm
----
 kind: signature
-hmac: b89720144444f99216404402737ac0bed631244d4543da510420e8f71234ea65
+hmac: a5ae870b1dbcd419920cdc4d47d7b9fcd0d472f570e06bf73cc3be007db620d6
 
 ...
