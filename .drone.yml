@@ -1,242 +1,32 @@
 ---
 kind: pipeline
-name: linux-amd64
-
-platform:
-  os: linux
-  arch: amd64
+name: build
 
 steps:
-- name: build-push
-  pull: always
-  image: golang:1.11
-  commands:
-  - go get github.com/urfave/cli
-  - go get github.com/pkg/errors
-  - "go build -v -ldflags \"-X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/linux/amd64/drone-teams"
+- name: build
+  image: golang
   environment:
+    GOOS: linux
+    GOARCH: amd64
     CGO_ENABLED: 0
-  when:
-    event:
-    - push
-    - pull_request
-
-- name: build-tag
-  pull: always
-  image: golang:1.11
   commands:
-  - go get github.com/urfave/cli
-  - go get github.com/pkg/errors
-  - "go build -v -ldflags \"-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/linux/amd64/drone-teams"
-  environment:
-    CGO_ENABLED: 0
-  when:
-    event:
-    - tag
+    - go get -u github.com/pkg/errors
+    - go get github.com/urfave/cli
+    - go build -o drone-teams
 
-- name: executable
-  pull: always
-  image: golang:1.11
-  commands:
-  - ./release/linux/amd64/drone-teams --help
-
-- name: dryrun
-  pull: always
-  image: plugins/docker:linux-amd64
+- name: docker  
+  image: plugins/docker
   settings:
-    dockerfile: docker/Dockerfile.linux.amd64
-    dry_run: true
-    password:
-      from_secret: docker_password
+    username: 
+      from_secret: docker_hub_user
+    password: 
+      from_secret: docker_hub_password
     repo: digitalwerber/drone-teams
-    tags: linux-amd64
-    username:
-      from_secret: docker_username
-  when:
-    event:
-    - pull_request
+    tags: latest
 
-- name: publish
-  pull: always
-  image: plugins/docker:linux-amd64
-  settings:
-    auto_tag: true
-    auto_tag_suffix: linux-amd64
-    dockerfile: docker/Dockerfile.linux.amd64
-    password:
-      from_secret: docker_password
-    repo: digitalwerber/drone-teams
-    username:
-      from_secret: docker_username
-  when:
-    event:
-    - push
-    - tag
-
-trigger:
-  branch:
-  - master
-
----
-kind: pipeline
-name: linux-arm64
-
-platform:
-  os: linux
-  arch: arm64
-
-steps:
-- name: build-push
-  pull: always
-  image: golang:1.11
-  commands:
-  - go get github.com/urfave/cli
-  - go get github.com/pkg/errors
-  - "go build -v -ldflags \"-X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/linux/arm64/drone-teams"
-  environment:
-    CGO_ENABLED: 0
-  when:
-    event:
-    - push
-    - pull_request
-
-- name: build-tag
-  pull: always
-  image: golang:1.11
-  commands:
-  - go get github.com/urfave/cli
-  - go get github.com/pkg/errors
-  - "go build -v -ldflags \"-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/linux/arm64/drone-teams"
-  environment:
-    CGO_ENABLED: 0
-  when:
-    event:
-    - tag
-
-- name: executable
-  pull: always
-  image: golang:1.11
-  commands:
-  - ./release/linux/arm64/drone-teams --help
-
-- name: dryrun
-  pull: always
-  image: plugins/docker:linux-arm64
-  settings:
-    dockerfile: docker/Dockerfile.linux.arm64
-    dry_run: true
-    password:
-      from_secret: docker_password
-    repo: digitalwerber/drone-teams
-    tags: linux-arm64
-    username:
-      from_secret: docker_username
-  when:
-    event:
-    - pull_request
-
-- name: publish
-  pull: always
-  image: plugins/docker:linux-arm64
-  settings:
-    auto_tag: true
-    auto_tag_suffix: linux-arm64
-    dockerfile: docker/Dockerfile.linux.arm64
-    password:
-      from_secret: docker_password
-    repo: digitalwerber/drone-teams
-    username:
-      from_secret: docker_username
-  when:
-    event:
-    - push
-    - tag
-
-trigger:
-  branch:
-  - master
-
----
-kind: pipeline
-name: linux-arm
-
-platform:
-  os: linux
-  arch: arm
-
-steps:
-- name: build-push
-  pull: always
-  image: golang:1.11
-  commands:
-  - go get github.com/urfave/cli
-  - go get github.com/pkg/errors
-  - "go build -v -ldflags \"-X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/linux/arm/drone-teams"
-  environment:
-    CGO_ENABLED: 0
-  when:
-    event:
-    - push
-    - pull_request
-
-- name: build-tag
-  pull: always
-  image: golang:1.11
-  commands:
-  - go get github.com/urfave/cli
-  - go get github.com/pkg/errors
-  - "go build -v -ldflags \"-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}\" -a -o release/linux/arm/drone-teams"
-  environment:
-    CGO_ENABLED: 0
-  when:
-    event:
-    - tag
-
-- name: executable
-  pull: always
-  image: golang:1.11
-  commands:
-  - ./release/linux/arm/drone-teams --help
-
-- name: dryrun
-  pull: always
-  image: plugins/docker:linux-arm
-  settings:
-    dockerfile: docker/Dockerfile.linux.arm
-    dry_run: true
-    password:
-      from_secret: docker_password
-    repo: digitalwerber/drone-teams
-    tags: linux-arm
-    username:
-      from_secret: docker_username
-  when:
-    event:
-    - pull_request
-
-- name: publish
-  pull: always
-  image: plugins/docker:linux-arm
-  settings:
-    auto_tag: true
-    auto_tag_suffix: linux-arm
-    dockerfile: docker/Dockerfile.linux.arm
-    password:
-      from_secret: docker_password
-    repo: digitalwerber/drone-teams
-    username:
-      from_secret: docker_username
-  when:
-    event:
-    - push
-    - tag
-
-trigger:
-  branch:
-  - master
 
 ---
 kind: signature
-hmac: a5ae870b1dbcd419920cdc4d47d7b9fcd0d472f570e06bf73cc3be007db620d6
+hmac: c8e124aa1a3c77b0ca02ee3f885a5813fcc8dff56bd9ed16bcf67213742490ca
 
 ...

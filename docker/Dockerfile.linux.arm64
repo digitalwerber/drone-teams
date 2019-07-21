@@ -1,9 +1,0 @@
-FROM plugins/base:multiarch
-
-LABEL maintainer="Michael Müller <io@digitalwerber.de>" \
-  org.label-schema.name="Drone Teams" \
-  org.label-schema.vendor="Michael Müller" \
-  org.label-schema.schema-version="1.0"
-
-ADD release/linux/arm64/drone-teams /bin/
-ENTRYPOINT ["/bin/drone-teams"]
